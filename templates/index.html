@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #chat-container {
+            width: 100%;
+            max-width: 600px;
+            height: 90vh;
+            max-height: 800px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #header {
+            padding: 15px 20px;
+            background-color: #8d6396;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+        #header h1 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        #clear-chat {
+            background: #fff;
+            color: #E74C3C;
+            border: 1px solid #E74C3C;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #clear-chat:hover {
+            background: #E74C3C;
+            color: #fff;
+        }
+        #chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .user {
+            background-color:#8d6396;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .bot {
+            background-color: #E5E5EA;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        #form-container {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        #chat-form {
+            display: flex;
+        }
+        #user-input {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 1em;
+            outline: none;
+        }
+        #user-input:focus {
+            border-color:#8d6396;
+        }
+        #chat-form button {
+            background-color: #8d6396;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .loading-indicator {
+            align-self: flex-start;
+            margin-bottom: 10px;
+        }
+        .loading-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #aaa;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .loading-indicator .dot1 { animation-delay: -0.32s; }
+        .loading-indicator .dot2 { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="header">
+            <h1>AI Chatbot</h1>
+            <button id="clear-chat">Clear Chat</button>
+        </div>
+        <div id="chat-box">
+            <!-- Messages will be loaded here by Jinja2 and JavaScript -->
+            {% for msg in history %}
+                <div class="message {{ msg.sender }}">
+                    {{ msg.content|safe }}
+                </div>
+            {% endfor %}
+        </div>
+        <div id="form-container">
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatBox = document.getElementById('chat-box');
+            const chatForm = document.getElementById('chat-form');
+            const userInput = document.getElementById('user-input');
+            const clearChatBtn = document.getElementById('clear-chat');
+
+            // Function to scroll to the bottom of the chat box
+            const scrollToBottom = () => {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            };
+
+            // Scroll to bottom on page load
+            scrollToBottom();
+
+            // Function to add a message to the chat box
+            const addMessage = (sender, text) => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', sender);
+                messageElement.textContent = text;
+                chatBox.appendChild(messageElement);
+                scrollToBottom();
+            };
+            
+            // Function to show/hide loading indicator
+            const showLoading = (show) => {
+                let loadingIndicator = document.getElementById('loading');
+                if (show) {
+                    if (!loadingIndicator) {
+                        loadingIndicator = document.createElement('div');
+                        loadingIndicator.id = 'loading';
+                        loadingIndicator.classList.add('loading-indicator');
+                        loadingIndicator.innerHTML = '<span class="dot1"></span><span class="dot2"></span><span class="dot3"></span>';
+                        chatBox.appendChild(loadingIndicator);
+                        scrollToBottom();
+                    }
+                } else {
+                    if (loadingIndicator) {
+                        loadingIndicator.remove();
+                    }
+                }
+            };
+
+            // Handle form submission
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const messageText = userInput.value.trim();
+                if (!messageText) return;
+
+                // Display user's message immediately
+                addMessage('user', messageText);
+                userInput.value = '';
+                showLoading(true);
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: messageText }),
+                    });
+
+                    showLoading(false);
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const data = await response.json();
+                    addMessage('bot', data.response);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showLoading(false);
+                    addMessage('bot', 'Sorry, I encountered an error. Please try again.');
+                }
+            });
+            
+            // Handle clear chat button
+            clearChatBtn.addEventListener('click', async () => {
+                if(confirm('Are you sure you want to clear the entire chat history?')){
+                    try {
+                        await fetch('/clear', { method: 'POST' });
+                        chatBox.innerHTML = ''; // Clear the frontend display
+                        alert('Chat history has been cleared.');
+                    } catch(error) {
+                        console.error('Error clearing chat:', error);
+                        addMessage('bot', 'Could not clear chat history.');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
