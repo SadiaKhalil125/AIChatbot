@@ -82,6 +82,16 @@ Follow these instructions to get a copy of the project up and running on your lo
 7.  **Open your browser:**
     Navigate to `http://127.0.0.1:5001` to start chatting!
 
+
+## Project Visuals
+
+![Screenshot (1132)](https://github.com/user-attachments/assets/cb8bfd90-11f3-4af5-b6ba-9a7de5c06b24)
+
+![Screenshot (1133)](https://github.com/user-attachments/assets/2168bef6-3d12-41e1-9440-330b2ced5950)
+
+![Screenshot (1134)](https://github.com/user-attachments/assets/445f1e4f-4c6d-4072-86cb-9bc3bd80ee05)
+
+
 ## 📂 Project Structure
 
 ```
