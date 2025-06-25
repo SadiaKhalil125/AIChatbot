@@ -76,7 +76,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 6.  **Run the Flask application:**
     ```sh
-    python app.py
+    python chatbot_server.py
     ```
 
 7.  **Open your browser:**
