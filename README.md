@@ -42,8 +42,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/sadiakhalil125/AIChatbot.git
+    cd AIChatbot
     ```
 
 2.  **Create a virtual environment and activate it:**
