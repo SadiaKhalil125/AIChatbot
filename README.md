@@ -112,7 +112,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 1.  **User Interface**: The user interacts with the chat interface in `templates/index.html`.
 2.  **Send Message**: When the user sends a message, JavaScript sends a `POST` request to the `/chat` endpoint on the Flask server.
 3.  **Backend Processing**:
-    -   The `chat()` function in `app.py` receives the message.
+    -   The `chat()` function in `chatbot_server.py` receives the message.
     -   It calls `get_chat_history()` to pull the entire conversation history from Firestore.
     -   LangChain's `ChatPromptTemplate` assembles a complete prompt, including the system message, the past conversation, and the new user query.
     -   The prompt is sent to the OpenAI model.
