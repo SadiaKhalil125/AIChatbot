@@ -1,0 +1,13 @@
+# Web Framework
+Flask
+
+# Environment Variables
+python-dotenv
+
+# Firebase Admin for Database
+firebase-admin
+google-cloud-firestore
+
+# LangChain Core and OpenAI Integration
+langchain
+langchain-openai
