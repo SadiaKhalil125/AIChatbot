@@ -96,7 +96,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 ```
 /chat_project
-|-- app.py                 # Main Flask application, routes, and logic
+|-- chatbot_server.py                 # Main Flask application, routes, and logic
 |-- firebase_key.json      # Your Firebase service account credentials (gitignored)
 |-- .env                   # Environment variables for API keys (gitignored)
 |-- requirements.txt       # Python dependencies
